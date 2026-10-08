@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#6c5ce7">
+<title>Jelajah Peribahasa Tahun 4</title>
+<style>
+:root{--p:#6c5ce7;--p2:#00cec9;--pink:#fd79a8;--yellow:#ffeaa7;--green:#00b894;--red:#d63031;--ink:#2d3436;--card:rgba(255,255,255,.94)}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);overflow-x:hidden;
+background:linear-gradient(135deg,#a29bfe,#81ecec 45%,#ffeaa7);min-height:100vh}
+body:before,body:after{content:"";position:fixed;border-radius:50%;filter:blur(2px);opacity:.35;z-index:-1;animation:float 9s ease-in-out infinite}
+body:before{width:180px;height:180px;background:#fd79a8;top:8%;left:-50px}body:after{width:230px;height:230px;background:#55efc4;right:-70px;bottom:5%;animation-delay:2s}
+@keyframes float{50%{transform:translate(30px,-25px) scale(1.08)}}
+.wrap{max-width:1100px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-weight:900;font-size:clamp(20px,4vw,34px);color:white;text-shadow:0 3px 0 #5b4fc4}.pill{background:#fff;padding:8px 12px;border-radius:999px;font-weight:800}
+.card{background:var(--card);border:3px solid rgba(255,255,255,.65);border-radius:28px;padding:22px;box-shadow:0 15px 45px rgba(68,49,130,.18);backdrop-filter:blur(8px)}
+.hero{text-align:center;margin-top:15px}.hero h1{font-size:clamp(28px,6vw,52px);margin:5px 0}.hero p{font-size:18px}
+button{border:0;border-radius:16px;padding:12px 18px;font-weight:900;cursor:pointer;font-size:16px;box-shadow:0 6px 0 rgba(0,0,0,.12);transition:.15s}
+button:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.primary{background:var(--p);color:white}.teal{background:var(--p2);color:#064c4b}.pink{background:var(--pink);color:white}.yellow{background:#fdcb6e}.ghost{background:white}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.hidden{display:none!important}
+input{width:100%;padding:14px 16px;border:3px solid #ddd;border-radius:15px;font-size:17px;outline:none}input:focus{border-color:var(--p)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}.gamecard{padding:18px;border-radius:22px;background:white;border:3px solid #eee;text-align:center}
+.badge{display:inline-block;background:#eee;padding:6px 10px;border-radius:999px;font-weight:800}.stars{font-size:26px;letter-spacing:3px}
+.levels{display:flex;gap:10px;justify-content:center;margin:15px 0;flex-wrap:wrap}.level{background:#fff}.level.active{background:#6c5ce7;color:#fff}
+.info{line-height:1.6}.info strong{color:#5b4fc4}
+#snakeCanvas{width:min(100%,520px);aspect-ratio:1/1;background:linear-gradient(145deg,#dff9fb,#fff);border:5px solid #6c5ce7;border-radius:20px;display:block;margin:12px auto}
+.controls{display:grid;grid-template-columns:60px 60px 60px;gap:7px;justify-content:center}.controls button{padding:10px}.controls .blank{visibility:hidden}
+.quizQ{font-size:22px;font-weight:900;text-align:center}.answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:15px}.answer{background:#f1f2f6;text-align:left;min-height:58px}
+.answer.correct{background:#55efc4}.answer.wrong{background:#ff7675;color:white}
+.matchgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:700px;margin:auto}.match{min-height:80px;background:#f8f9fa}.match.selected{outline:4px solid #74b9ff}.match.done{background:#55efc4}
+.notegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.note{padding:18px;border-radius:20px;color:#2d3436;background:#fff;border:3px dashed #a29bfe}
+#toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:20;background:#fff;padding:14px 20px;border-radius:999px;font-weight:900;box-shadow:0 10px 35px #0003;display:none}
+.win{font-size:60px;text-align:center;animation:pop .7s ease}.confetti{position:fixed;inset:0;pointer-events:none;z-index:30}.piece{position:absolute;width:10px;height:18px;animation:fall 2.5s linear forwards}
+@keyframes pop{50%{transform:scale(1.25)} }@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.small{font-size:13px;color:#636e72}.footer{text-align:center;padding:22px;font-size:13px}
+
+.map{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.zone{position:relative;min-height:145px;border-radius:24px;padding:18px;color:white;overflow:hidden;cursor:pointer;box-shadow:0 8px 0 #0002}
+.zone:nth-child(1){background:linear-gradient(135deg,#00b894,#55efc4)}.zone:nth-child(2){background:linear-gradient(135deg,#6c5ce7,#a29bfe)}.zone:nth-child(3){background:linear-gradient(135deg,#e17055,#fdcb6e)}
+.zone.locked{filter:grayscale(.7);opacity:.7;cursor:not-allowed}.zone .big{font-size:48px}.zone h3{margin:4px 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:#fff;border-radius:18px;padding:12px;text-align:center;border:2px solid #eee}.stat b{display:block;font-size:25px}
+.badges{display:flex;flex-wrap:wrap;gap:8px}.badge2{padding:10px 12px;border-radius:15px;background:#fff3cd;border:2px solid #fdcb6e;font-weight:900}.badge2.lock{filter:grayscale(1);opacity:.45}
+.certificate{background:linear-gradient(135deg,#fff,#f3eaff);border:8px double #6c5ce7;border-radius:20px;padding:30px;text-align:center}.certificate h1{color:#6c5ce7;font-size:38px}
+.leader{width:100%;border-collapse:collapse}.leader th,.leader td{padding:10px;border-bottom:2px solid #eee;text-align:left}.rank1{font-size:22px}
+@media(max-width:650px){.map{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media print{body{background:#fff}.top,.footer,button,#toast{display:none!important}.card{box-shadow:none;border:0}.certificate{margin-top:20px}}\n</style>
+</head>
+<body>
+<div id="toast"></div><div id="confetti" class="confetti"></div>
+<div class="wrap">
+<header class="top"><div class="logo">🚀 Jelajah Peribahasa</div><div class="pill">⭐ <span id="starTop">0</span> bintang</div></header>
+
+<section id="home" class="card hero">
+  <div style="font-size:70px">🐍📚🌈</div>
+  <h1>Bahasa Melayu Tahun 4</h1>
+  <p><b>Peribahasa</b> • Nota Infografik • Mini-Game</p>
+  <div style="max-width:460px;margin:20px auto">
+    <label><b>Nama murid</b></label>
+    <input id="studentName" placeholder="Contoh: Aisyah" maxlength="30">
+  </div>
+  <div class="row">
+    <button class="primary" onclick="startGame()">🚀 Mula Pengembaraan</button>
+    <button class="ghost" onclick="show('notes')">📚 Nota Infografik</button>
+    <button class="yellow" onclick="toggleSound()">🔊 Bunyi: <span id="soundText">ON</span></button>
+  </div>
+  <p class="small">Boleh dimainkan di telefon, tablet atau komputer. Nama disimpan pada peranti ini sahaja.</p>
+</section>
+
+<section id="menu" class="card hidden">
+  <h2>🗺️ Dunia Peribahasa</h2>
+  <p id="welcome"></p>
+  <div class="stats">
+    <div class="stat">⭐<b id="statStars">0</b>Bintang</div>
+    <div class="stat">🏆<b id="statScore">0</b>Markah</div>
+    <div class="stat">🎖️<b id="statBadges">0</b>Badge</div>
+    <div class="stat">🔥<b id="statStreak">0</b>Streak</div>
+  </div>
+  <div class="map">
+    <div class="zone" onclick="setLevel(1);toast('🌱 Zon 1 dibuka!')"><div class="big">🌱</div><h3>Zon 1: Taman Peribahasa</h3><p>Asas & maksud</p></div>
+    <div class="zone" onclick="setLevel(2);toast('🌳 Zon 2 dibuka!')"><div class="big">🌳</div><h3>Zon 2: Hutan Bahasa</h3><p>Penggunaan & situasi</p></div>
+    <div class="zone" onclick="setLevel(3);toast('🏰 Zon 3 dibuka!')"><div class="big">🏰</div><h3>Zon 3: Istana Juara</h3><p>Cabaran pakar</p></div>
+  </div>
+  <div class="levels">
+  <div class="levels">
+    <button class="level active" onclick="setLevel(1)">⭐ Tahap 1</button>
+    <button class="level" onclick="setLevel(2)">⭐⭐ Tahap 2</button>
+    <button class="level" onclick="setLevel(3)">⭐⭐⭐ Tahap 3</button>
+  </div>
+  <div class="grid">
+    <div class="gamecard"><div style="font-size:50px">🐍</div><h3>Snake Peribahasa</h3><p>Gerakkan ular dan kutip jawapan yang betul.</p><button class="primary" onclick="openSnake()">Main</button></div>
+    <div class="gamecard"><div style="font-size:50px">🧠</div><h3>Kuiz Pantas</h3><p>Pilih maksud peribahasa yang tepat.</p><button class="teal" onclick="openQuiz()">Main</button></div>
+    <div class="gamecard"><div style="font-size:50px">🧩</div><h3>Padan Makna</h3><p>Padankan peribahasa dengan maksudnya.</p><button class="pink" onclick="openMatch()">Main</button></div>
+    <div class="gamecard"><div style="font-size:50px">📖</div><h3>Nota Infografik</h3><p>Ulang kaji sebelum atau selepas bermain.</p><button class="yellow" onclick="show('notes')">Buka</button></div>
+  </div>
+  <div class="row" style="margin-top:18px">
+    <button class="ghost" onclick="show('home')">⬅️ Utama</button>
+    <button class="yellow" onclick="showLeaderboard()">🏆 Papan Juara</button>
+    <button class="pink" onclick="showBadges()">🎖️ Koleksi Badge</button>
+    <button class="teal" onclick="showCertificate()">📜 Sijil</button>
+    <button class="ghost" onclick="resetProgress()">♻️ Reset Data</button>
+  </div>
+</section>
+
+<section id="leaderboard" class="card hidden">
+<h2>🏆 Papan Juara Peranti</h2><p class="small">Markah disimpan pada peranti ini sahaja. Sesuai untuk pertandingan dalam satu tablet/komputer.</p>
+<table class="leader"><thead><tr><th>Kedudukan</th><th>Nama</th><th>Markah</th><th>Bintang</th></tr></thead><tbody id="leaderBody"></tbody></table>
+<div class="row"><button class="primary" onclick="show('menu')">⬅️ Kembali</button></div>
+</section>
+
+<section id="badges" class="card hidden">
+<h2>🎖️ Koleksi Badge</h2><div id="badgeList" class="badges"></div>
+<div class="row"><button class="primary" onclick="show('menu')">⬅️ Kembali</button></div>
+</section>
+
+<section id="certificate" class="card hidden">
+<div class="certificate"><div style="font-size:65px">🏅</div><h1>Sijil Juara Peribahasa</h1>
+<p>Dengan ini diperakui bahawa</p><h2 id="certName">Murid Hebat</h2><p>telah menyertai <b>Jelajah Peribahasa Bahasa Melayu Tahun 4</b></p>
+<p>dan menunjukkan usaha dalam memahami maksud serta penggunaan peribahasa.</p><h3>⭐ <span id="certStars">0</span> bintang &nbsp; • &nbsp; 🏆 <span id="certScore">0</span> markah</h3>
+<p>Guru: MUHAMAD SYAWALWAHED<br>SK (P) JALAN YAHYA AWAL</p></div>
+<div class="row" style="margin-top:15px"><button class="primary" onclick="window.print()">🖨️ Cetak / Simpan PDF</button><button class="ghost" onclick="show('menu')">⬅️ Kembali</button></div>
+</section>
+
+<section id="notes" class="card hidden">
+<h2>📚 Nota Infografik: Peribahasa</h2>
+<div class="notegrid">
+<div class="note"><h3>💡 Apa itu?</h3><p>Peribahasa ialah ungkapan bahasa yang mempunyai maksud tertentu dan biasanya mengandungi pengajaran atau nilai.</p></div>
+<div class="note"><h3>🧰 Jenis</h3><p>Antara bentuk peribahasa ialah <b>simpulan bahasa, perumpamaan, pepatah, bidalan, perbilangan</b> dan kata-kata hikmat.</p></div>
+<div class="note"><h3>🌱 Nilai</h3><p>Peribahasa boleh menyampaikan nilai seperti rajin, bekerjasama, berjimat, sabar dan menjaga hubungan.</p></div>
+<div class="note"><h3>🗣️ Cara guna</h3><p>Fahami maksud dahulu, kemudian gunakan dalam ayat atau dialog yang sesuai dengan situasi.</p></div>
+</div>
+<h3>⭐ Koleksi Misi</h3>
+<div class="grid" id="noteList"></div>
+<div class="row"><button class="primary" onclick="show('menu')">🎮 Kembali Bermain</button></div>
+</section>
+
+<section id="snake" class="card hidden">
+<h2>🐍 Snake Peribahasa — Tahap <span id="snakeLevel">1</span></h2>
+<p id="snakePrompt" class="quizQ"></p>
+<canvas id="snakeCanvas" width="520" height="520"></canvas>
+<div class="controls"><button class="blank">.</button><button onclick="dir(0,-1)">⬆️</button><button class="blank">.</button><button onclick="dir(-1,0)">⬅️</button><button onclick="pauseSnake()">⏯️</button><button onclick="dir(1,0)">➡️</button><button class="blank">.</button><button onclick="dir(0,1)">⬇️</button><button class="blank">.</button></div>
+<p style="text-align:center">💡 Papan kekunci: anak panah / WASD. Kutip <b>jawapan yang betul</b>, elak yang salah!</p>
+<div class="row"><button class="ghost" onclick="stopSnake();show('menu')">⬅️ Menu</button></div>
+</section>
+
+<section id="quiz" class="card hidden">
+<h2>🧠 Kuiz Pantas — Tahap <span id="quizLevel">1</span></h2>
+<div id="quizBox"></div><div class="row"><button class="ghost" onclick="show('menu')">⬅️ Menu</button></div>
+</section>
+
+<section id="match" class="card hidden">
+<h2>🧩 Padan Makna — Tahap <span id="matchLevel">1</span></h2>
+<p style="text-align:center">Klik satu peribahasa, kemudian klik maksud yang sepadan.</p>
+<div id="matchGrid" class="matchgrid"></div>
+<div class="row"><button class="ghost" onclick="show('menu')">⬅️ Menu</button></div>
+</section>
+
+<section id="result" class="card hidden">
+<div class="win">🏆🎉🌟</div><h2 style="text-align:center">Tahniah, <span id="resultName"></span>!</h2>
+<p style="text-align:center;font-size:20px" id="resultText"></p>
+<div class="row"><button class="primary" onclick="show('menu')">🎮 Misi Seterusnya</button><button class="yellow" onclick="show('notes')">📚 Ulang Kaji</button></div>
+</section>
+
+<footer class="footer">Bahan digital: <b>Jelajah Peribahasa Tahun 4</b> • Guru: <b>MUHAMAD SYAWALWAHED</b> • SK (P) JALAN YAHYA AWAL</footer>
+</div>
+
+<script>
+const DATA=[
+ {p:"Bagai aur dengan tebing",m:"Saling membantu dan bekerjasama",c:"Kerjasama",e:"Murid-murid bekerjasama menyiapkan taman sekolah."},
+ {p:"Ringan tulang",m:"Rajin membantu atau melakukan kerja",c:"Kerajinan",e:"Amir ringan tulang membantu ibunya."},
+ {p:"Bagai isi dengan kuku",m:"Hubungan yang sangat rapat",c:"Persahabatan",e:"Siti dan Aina bagai isi dengan kuku."},
+ {p:"Sediakan payung sebelum hujan",m:"Bersedia lebih awal sebelum sesuatu berlaku",c:"Persediaan",e:"Simpan wang untuk kegunaan kecemasan."},
+ {p:"Sedikit-sedikit, lama-lama menjadi bukit",m:"Usaha kecil yang berterusan akan menghasilkan sesuatu yang besar",c:"Ketekunan",e:"Menyimpan sedikit wang setiap hari akhirnya menjadi banyak."},
+ {p:"Bulat air kerana pembetung, bulat manusia kerana muafakat",m:"Persetujuan dan kerjasama membawa kekuatan",c:"Muafakat",e:"Penduduk bergotong-royong kerana sepakat."},
+ {p:"Harapkan pagar, pagar makan padi",m:"Orang yang dipercayai melakukan sesuatu yang merugikan",c:"Kepercayaan",e:"Orang yang diamanahkan wang pula mengambilnya."},
+ {p:"Alah bisa tegal biasa",m:"Perkara yang sukar akan menjadi biasa jika selalu dilakukan",c:"Ketabahan",e:"Latihan membaca setiap hari menjadikan bacaan semakin lancar."},
+ {p:"Melentur buluh biarlah dari rebungnya",m:"Mendidik seseorang sebaik-baiknya sejak kecil",c:"Pendidikan",e:"Ibu bapa mendidik anak menjaga adab sejak kecil."},
+ {p:"Kalau tidak dipecahkan ruyung, manakan dapat sagunya",m:"Kejayaan memerlukan usaha",c:"Usaha",e:"Kita perlu rajin berusaha untuk mendapat keputusan baik."},
+ {p:"Berat sama dipikul, ringan sama dijinjing",m:"Susah senang dihadapi bersama-sama",c:"Kerjasama",e:"Ahli kumpulan membantu ketika menyiapkan projek."},
+ {p:"Genggam bara api biar sampai jadi arang",m:"Melakukan sesuatu dengan tekun hingga berjaya",c:"Kesungguhan",e:"Dia terus berlatih walaupun pada awalnya sukar."},
+ {p:"Bagai kacang lupakan kulit",m:"Orang yang melupakan asal usul atau jasa orang lain",c:"Menghargai",e:"Jangan lupa orang yang pernah membantu kita."},
+ {p:"Ukur baju di badan sendiri",m:"Berbelanja atau bertindak mengikut kemampuan",c:"Berjimat",e:"Belilah barang mengikut kemampuan keluarga."},
+ {p:"Bersatu teguh, bercerai roboh",m:"Perpaduan menjadikan kita kuat",c:"Perpaduan",e:"Pasukan menjadi kuat apabila semua ahli bersatu."},
+ {p:"Malu bertanya sesat jalan",m:"Jangan malu bertanya jika tidak tahu",c:"Berani",e:"Jika tidak faham, tanyalah guru."},
+ {p:"Di mana ada kemahuan, di situ ada jalan",m:"Jika bersungguh-sungguh, pasti ada cara mencapai tujuan",c:"Motivasi",e:"Dia terus mencuba kerana mahu berjaya."},
+ {p:"Seperti katak di bawah tempurung",m:"Orang yang kurang pengetahuan kerana tidak mahu mengambil tahu",c:"Ilmu",e:"Kita perlu membaca untuk meluaskan pengetahuan."}
+];
+let level=1, stars=Number(localStorage.getItem("bm4stars")||0), score=Number(localStorage.getItem("bm4score")||0), streak=Number(localStorage.getItem("bm4streak")||0), sound=localStorage.getItem("bm4sound")!=="off", student="";
+const BADGES=[["🌱","Penjelajah Mula","Bermain 1 misi"],["⭐","Pengumpul Bintang","Kumpul 10 bintang"],["🧠","Bijak Peribahasa","Jawab 10 soalan betul"],["🐍","Raja Snake","Menang permainan Snake"],["🏆","Juara Tahap","Selesaikan misi Tahap 3"],["🔥","Api Semangat","Dapat 5 jawapan berturut-turut"]];
+let correctTotal=Number(localStorage.getItem("bm4correct")||0), snakeWins=Number(localStorage.getItem("bm4snakewins")||0);
+const $=id=>document.getElementById(id);
+$("starTop").textContent=stars; $("soundText").textContent=sound?"ON":"OFF";updateStats();
+function show(id){["home","menu","notes","snake","quiz","match","result","leaderboard","badges","certificate"].forEach(x=>$(x).classList.add("hidden"));$(id).classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"}); if(id==="notes")renderNotes();}
+function startGame(){student=$("studentName").value.trim()||"Murid Hebat";localStorage.setItem("bm4name",student);$("welcome").textContent=`Selamat datang, ${student}! Pilih zon pengembaraan dan kumpul bintang.`;updateStats();show("menu");}
+$("studentName").value=localStorage.getItem("bm4name")||"";
+function setLevel(n){level=n;document.querySelectorAll(".level").forEach((b,i)=>b.classList.toggle("active",i===n-1));toast("Tahap "+n+" dipilih!");}
+function save(){localStorage.setItem("bm4stars",stars);localStorage.setItem("bm4score",score);localStorage.setItem("bm4streak",streak);localStorage.setItem("bm4correct",correctTotal);localStorage.setItem("bm4snakewins",snakeWins);$("starTop").textContent=stars;updateStats()}
+function updateStats(){if($("statStars")){$("statStars").textContent=stars;$("statScore").textContent=score;$("statStreak").textContent=streak;$("statBadges").textContent=badgeCount()}}
+function badgeCount(){let n=0;if(stars>=1)n++;if(stars>=10)n++;if(correctTotal>=10)n++;if(snakeWins>=1)n++;if(level>=3)n++;if(streak>=5)n++;return n}
+function award(ok,pts=10){if(ok){correctTotal++;streak++;score+=pts;save()}else{streak=0;save()}}
+function showLeaderboard(){show("leaderboard");let key="bm4leaders";let arr=JSON.parse(localStorage.getItem(key)||"[]");if(student&&!arr.some(x=>x.name===student)){arr.push({name:student,score,stars});}else if(student){arr=arr.map(x=>x.name===student?{name:student,score:Math.max(x.score,score),stars:Math.max(x.stars,stars)}:x)}arr.sort((a,b)=>b.score-a.score);arr=arr.slice(0,10);localStorage.setItem(key,JSON.stringify(arr));$("leaderBody").innerHTML=arr.length?arr.map((x,i)=>`<tr><td class="rank1">${["🥇","🥈","🥉"][i]||i+1}</td><td>${x.name}</td><td>${x.score}</td><td>⭐ ${x.stars}</td></tr>`).join(""):`<tr><td colspan="4">Belum ada rekod.</td></tr>`}
+function showBadges(){show("badges");let got=[stars>=1,stars>=10,correctTotal>=10,snakeWins>=1,level>=3,streak>=5];$("badgeList").innerHTML=BADGES.map((b,i)=>`<div class="badge2 ${got[i]?"":"lock"}">${b[0]} ${b[1]}<br><small>${got[i]?"Diperoleh":"Belum diperoleh"} — ${b[2]}</small></div>`).join("")}
+function showCertificate(){show("certificate");$("certName").textContent=student||"Murid Hebat";$("certStars").textContent=stars;$("certScore").textContent=score}
+function addStars(n){stars+=n;save();toast("⭐ +"+n+" bintang!");}
+function toggleSound(){sound=!sound;localStorage.setItem("bm4sound",sound?"on":"off");$("soundText").textContent=sound?"ON":"OFF";toast(sound?"🔊 Bunyi dihidupkan":"🔇 Bunyi dimatikan");}
+function speak(t){if(!sound)return; try{let u=new SpeechSynthesisUtterance(t);u.lang="ms-MY";u.rate=.92;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function beep(ok=true){if(!sound)return;try{let a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.frequency.value=ok?740:180;o.type=ok?"sine":"square";g.gain.value=.08;o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+(ok?.16:.25));}catch(e){}}
+function feedback(ok){beep(ok);speak(ok?"Betul! Syabas!":"Belum tepat. Cuba lagi!");toast(ok?"✅ Betul! Syabas!":"❌ Belum tepat. Cuba lagi!")}
+function toast(t){$("toast").textContent=t;$("toast").style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>$("toast").style.display="none",1300)}
+function win(points=2){addStars(points);score+=points*10;if(level===3){}save();confetti();$("resultName").textContent=student||"Murid Hebat";$("resultText").textContent=`Anda mendapat ${points} bintang untuk misi ini. Teruskan usaha!`;setTimeout(()=>show("result"),400)}
+function confetti(){for(let i=0;i<45;i++){let d=document.createElement("i");d.className="piece";d.style.left=Math.random()*100+"%";d.style.top="-30px";d.style.background=["#fd79a8","#6c5ce7","#00cec9","#fdcb6e","#00b894"][i%5];d.style.animationDelay=Math.random()*0.8+"s";$("confetti").appendChild(d);setTimeout(()=>d.remove(),3300)}}
+function renderNotes(){ $("noteList").innerHTML=DATA.map((x,i)=>`<div class="note"><span class="badge">${i+1}</span><h3>${x.p}</h3><p><b>Maksud:</b> ${x.m}</p><p><b>Nilai:</b> ${x.c}</p></div>`).join("")}
+function resetProgress(){stars=0;score=0;streak=0;correctTotal=0;snakeWins=0;localStorage.removeItem("bm4leaders");save();toast("Semua kemajuan telah direset.");}
+
+let qIndex=0,qScore=0;
+function openQuiz(){qIndex=0;qScore=0;show("quiz");$("quizLevel").textContent=level;renderQuiz()}
+function renderQuiz(){
+ let count=level===1?4:level===2?6:8;if(qIndex>=count){win(Math.max(1,Math.min(3,Math.ceil(qScore/count*3))));return}
+ let item=DATA[(qIndex+level-1)%DATA.length], opts=[item.m];
+ while(opts.length<4){let m=DATA[Math.floor(Math.random()*DATA.length)].m;if(!opts.includes(m))opts.push(m)}
+ opts.sort(()=>Math.random()-.5);
+ $("quizBox").innerHTML=`<p class="small" style="text-align:center">Soalan ${qIndex+1} / ${count}</p><div class="quizQ">Apakah maksud <span style="color:#6c5ce7">“${item.p}”</span>?</div><div class="answers">${opts.map(o=>`<button class="answer" onclick="answerQuiz(this,${JSON.stringify(o===item.m)})">${o}</button>`).join("")}</div>`;
+}
+function answerQuiz(btn,ok){document.querySelectorAll(".answer").forEach(b=>b.disabled=true);btn.classList.add(ok?"correct":"wrong");feedback(ok);if(ok){qScore++;addStars(1);award(true,10)}else{award(false);document.querySelectorAll(".answer").forEach(b=>{if(b.textContent===DATA[(qIndex+level-1)%DATA.length].m)b.classList.add("correct")})}qIndex++;setTimeout(renderQuiz,850)}
+
+let sel=null,matchPairs=[];
+function openMatch(){show("match");$("matchLevel").textContent=level;let n=level===1?3:level===2?4:5;matchPairs=DATA.slice(level-1,level-1+n);sel=null;let cards=[];matchPairs.forEach((x,i)=>{cards.push({id:i,type:"p",txt:x.p});cards.push({id:i,type:"m",txt:x.m})});cards.sort(()=>Math.random()-.5);$("matchGrid").innerHTML=cards.map((c,i)=>`<button class="match" data-i="${i}" data-id="${c.id}" data-type="${c.type}" onclick="pickMatch(this)">${c.txt}</button>`).join("")}
+function pickMatch(el){if(el.classList.contains("done"))return;if(!sel){sel=el;el.classList.add("selected");return}if(sel===el)return;if(sel.dataset.id===el.dataset.id&&sel.dataset.type!==el.dataset.type){sel.classList.remove("selected");el.classList.add("done");sel.classList.add("done");feedback(true);addStars(1);award(true,15);sel=null;if(document.querySelectorAll(".match.done").length===matchPairs.length*2)setTimeout(()=>win(Math.min(3,level)),500)}else{feedback(false);el.classList.add("wrong");sel.classList.remove("selected");setTimeout(()=>el.classList.remove("wrong"),450);sel=null}}
+
+let snakeTimer=null,snake=[],food=[],vx=1,vy=0,paused=false,sp=150,snakeItem,wrongItem;
+const canvas=$("snakeCanvas"),ctx=canvas.getContext("2d");
+function openSnake(){show("snake");$("snakeLevel").textContent=level;startSnake()}
+function startSnake(){stopSnake();let cols=13,cell=40;snake=[{x:6,y:6},{x:5,y:6},{x:4,y:6}];vx=1;vy=0;paused=false;snakeItem=null;wrongItem=null;placeFoods();$("snakePrompt").textContent="Cari jawapan yang betul untuk: "+DATA[(level-1)%DATA.length].p;snakeTimer=setInterval(tick,level===1?180:level===2?140:110);draw()}
+function placeFoods(){let item=DATA[(level-1)%DATA.length];let opts=[item.m];while(opts.length<3){let m=DATA[Math.floor(Math.random()*DATA.length)].m;if(!opts.includes(m))opts.push(m)}let cells=[];for(let y=0;y<13;y++)for(let x=0;x<13;x++)cells.push({x,y});cells=cells.filter(c=>!snake.some(s=>s.x===c.x&&s.y===c.y));snakeItem={...cells.splice(Math.floor(Math.random()*cells.length),1),txt:item.m,ok:true};wrongItem={...cells.splice(Math.floor(Math.random()*cells.length),1),txt:opts.find(x=>x!==item.m),ok:false};food=[snakeItem,wrongItem]}
+function tick(){if(paused)return;let h={x:snake[0].x+vx,y:snake[0].y+vy};if(h.x<0||h.x>12||h.y<0||h.y>12||snake.some((s,i)=>i>0&&s.x===h.x&&s.y===h.y)){feedback(false);startSnake();return}snake.unshift(h);let hit=food.findIndex(f=>f.x===h.x&&f.y===h.y);if(hit>=0){let f=food[hit];if(f.ok){feedback(true);addStars(1);award(true,15);snake.pop();if(snake.length>=9){snakeWins++;score+=50;save();toast("🏆 Raja Snake!");confetti()}placeFoods();let target=DATA[(level-1)%DATA.length];$("snakePrompt").textContent="Hebat! Cari lagi jawapan untuk: "+target.p}else{feedback(false);snake.pop();snake.pop();placeFoods()}}else snake.pop();draw()}
+function draw(){let c=40;ctx.clearRect(0,0,520,520);ctx.strokeStyle="#dfe6e9";for(let i=0;i<=13;i++){ctx.beginPath();ctx.moveTo(i*c,0);ctx.lineTo(i*c,520);ctx.moveTo(0,i*c);ctx.lineTo(520,i*c);ctx.stroke()}food.forEach(f=>{ctx.fillStyle=f.ok?"#00b894":"#ff7675";roundRect(ctx,f.x*c+3,f.y*c+3,34,34,10);ctx.fillStyle="#fff";ctx.font="bold 17px system-ui";ctx.textAlign="center";ctx.fillText(f.ok?"✓":"×",f.x*c+20,f.y*c+25)});snake.forEach((s,i)=>{ctx.fillStyle=i===0?"#6c5ce7":"#a29bfe";roundRect(ctx,s.x*c+4,s.y*c+4,32,32,9);ctx.fill();if(i===0){ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(s.x*c+13,s.y*c+14,3,0,7);ctx.arc(s.x*c+27,s.y*c+14,3,0,7);ctx.fill()}})}
+function roundRect(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r)}
+function dir(x,y){if(vx===-x&&vy===-y)return;vx=x;vy=y}
+function pauseSnake(){paused=!paused;toast(paused?"⏸️ Dijeda":"▶️ Sambung")}
+function stopSnake(){if(snakeTimer){clearInterval(snakeTimer);snakeTimer=null}}
+document.addEventListener("keydown",e=>{let k=e.key.toLowerCase();if(k==="arrowup"||k==="w")dir(0,-1);if(k==="arrowdown"||k==="s")dir(0,1);if(k==="arrowleft"||k==="a")dir(-1,0);if(k==="arrowright"||k==="d")dir(1,0)});
+</script>
+</body>
+</html>
